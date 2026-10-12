@@ -1,160 +1,289 @@
-# Laboratório 1 — Preparação do Ambiente Laboratorial
+# Laboratório 1 --- Preparação do Ambiente Laboratorial
 
 ## 1. Objetivo
 
-Preparar um ambiente de virtualização com Oracle VirtualBox e Windows Server 2022, criando as bases para uma arquitetura Cliente-Servidor Virtual.
+Neste laboratório preparei um ambiente de virtualização para trabalhar
+com Windows Server 2022. O objetivo foi criar duas máquinas virtuais,
+colocá-las na mesma rede virtual, configurar endereços IPv4 estáticos e
+confirmar que os servidores conseguem comunicar entre si e aceder a
+serviços externos.
 
-O laboratório tem como objetivos configurar uma rede virtual, criar duas máquinas virtuais e instalar o Windows Server 2022 em ambas, garantindo a conectividade entre os servidores.
+A promoção de um servidor a Domain Controller e a criação da floresta,
+árvore e domínio ficam para o Laboratório 2.
 
 ## 2. Tecnologias utilizadas
 
-- Oracle VirtualBox
-- Windows Server 2022
-- Rede NAT (NAT Network)
-- IPv4
-- Windows PowerShell
+-   Oracle VirtualBox
+-   Windows Server 2022 Standard Evaluation
+-   Rede NAT Network do VirtualBox
+-   IPv4
+-   Windows PowerShell
 
 ## 3. Configuração da rede virtual
 
-Foi preparada uma rede virtual dedicada ao laboratório, denominada `LAB-AD`.
+No VirtualBox criei a rede NAT Network `LAB-AD`. Escolhi uma rede
+dedicada ao laboratório para permitir a comunicação entre as máquinas
+virtuais e o acesso à Internet, sem as ligar diretamente à rede física.
+O DHCP ficou desativado porque os endereços IPv4 dos servidores foram
+configurados manualmente.
 
-| Parâmetro | Configuração |
-|---|---|
-| Nome | `LAB-AD` |
-| Tipo | NAT Network |
-| Rede IPv4 | `10.10.10.0/24` |
-| DHCP | Desativado |
-| IPv6 | Desativado |
+  Parâmetro      Configuração
+  -------------- -----------------
+  Nome da rede   `LAB-AD`
+  Tipo           NAT Network
+  Prefixo IPv4   `10.10.10.0/24`
+  DHCP           Desativado
+  IPv6           Desativado
 
-Esta configuração permite preparar as máquinas virtuais para comunicarem entre si e acederem à Internet, mantendo o ambiente laboratorial separado da rede física.
+**Evidência:** `prints/08-rede-lab.png`
 
-## 4. Preparação do servidor DC01
+## 4. Primeiro servidor --- DC01
 
-### 4.1. Máquina virtual
+### 4.1. Criação da máquina virtual
 
-Foi criada a máquina virtual `VM-DC01` para instalar o Windows Server 2022.
+Criei a máquina virtual `VM-DC01` no VirtualBox e associei-lhe a ISO do
+Windows Server 2022. A instalação foi feita manualmente, sem a opção de
+instalação não assistida, para seguir as etapas do assistente de
+instalação.
 
-| Parâmetro | Configuração |
-|---|---|
-| Nome da máquina virtual | `VM-DC01` |
-| Sistema operativo | Windows Server 2022 |
-| Interface | Desktop Experience |
-| Processadores virtuais | 2 |
-| Memória RAM | 4096 MB |
-| Disco virtual | 60 GB |
-| Formato do disco | VDI |
-| Alocação do disco | Dinâmica |
-| Rede virtual | `LAB-AD` |
+  Parâmetro                 Configuração
+  ------------------------- -----------------------------------------
+  Nome da máquina virtual   `VM-DC01`
+  Sistema operativo         Windows Server 2022 Standard Evaluation
+  Interface                 Desktop Experience
+  Processadores virtuais    2
+  Memória RAM               4096 MB
+  Disco virtual             60 GB
+  Formato do disco          VDI
+  Alocação do disco         Dinâmica
+  Rede                      `LAB-AD`
 
-### 4.2. Instalação do Windows Server 2022
+**Evidências:** - `prints/01-virtualbox.png` -
+`prints/02-criacao-vm.png` - `prints/03-disco-virtual.png` -
+`prints/04-edicao-windows-server.png`
 
-Foi instalado o Windows Server 2022 com interface gráfica na primeira máquina virtual.
+### 4.2. Instalação e acesso inicial
 
-Após a instalação, foi configurada a conta administrativa local e efetuado o início de sessão no sistema operativo.
+Durante a instalação selecionei **Windows Server 2022 Standard
+Evaluation (Desktop Experience)**. Esta opção inclui a interface
+gráfica, necessária para acompanhar as tarefas do laboratório através
+das ferramentas do Windows Server.
 
-### 4.3. Alteração do nome do servidor
+Defini uma palavra-passe para a conta local `Administrator` e, depois de
+a instalação terminar, iniciei sessão no servidor.
 
-O nome do computador foi alterado para `DC01`.
+**Evidências:** - `prints/05-configuracao-administrador.png` -
+`prints/06-windows-server-instalado.png`
 
-Para confirmar o nome do computador, foi utilizado o seguinte comando no PowerShell:
+### 4.3. Nome do computador
 
-```powershell
+Depois da instalação, alterei o nome do computador para `DC01`.
+Confirmei o nome através do comando:
+
+``` powershell
 hostname
 ```
 
-O resultado obtido foi `DC01`.
+O resultado apresentado foi `DC01`.
 
 ### 4.4. Configuração IPv4
 
-Foi configurada a seguinte informação de rede no DC01:
+Configurei o adaptador de rede do `DC01` com os seguintes valores:
 
-| Parâmetro | Valor |
-|---|---|
-| Endereço IPv4 | `10.10.10.10` |
-| Máscara de sub-rede | `255.255.255.0` |
-| Gateway predefinido | `10.10.10.1` |
-| DNS preferencial inicial | `1.1.1.1` |
-| DNS alternativo inicial | `8.8.8.8` |
+  Parâmetro                  Valor
+  -------------------------- -----------------
+  Endereço IPv4              `10.10.10.10`
+  Máscara de sub-rede        `255.255.255.0`
+  Gateway predefinido        `10.10.10.1`
+  DNS preferencial inicial   `1.1.1.1`
+  DNS alternativo inicial    `8.8.8.8`
 
-A configuração foi consultada através do comando:
+Utilizei o comando seguinte para consultar a configuração completa do
+adaptador:
 
-```powershell
+``` powershell
 ipconfig /all
 ```
 
-Os servidores DNS públicos foram utilizados na configuração inicial, antes da implementação do serviço DNS interno do laboratório.
+Nesta fase, os DNS públicos foram usados para testar a resolução de
+nomes na Internet. Esta configuração é inicial; será revista quando o
+serviço DNS interno for configurado nas etapas seguintes do projeto.
 
-## 5. Validação
+**Evidências:** - `prints/07-rede-vm-dc01.png` -
+`prints/09-configuracao-ipv4.png`
 
-Foram executados testes de conectividade IP e resolução DNS no DC01. Ambos os testes foram concluídos com sucesso.
+### 4.5. Testes de conectividade e DNS
 
-| Teste | Comando | Resultado |
-|---|---|---|
-| Conectividade IP com a Internet | `ping 1.1.1.1` | Sucesso — comunicação confirmada |
-| Resolução DNS externa | `nslookup www.microsoft.com` | Sucesso — resolução de nomes confirmada |
+No `DC01`, executei os seguintes comandos:
 
-Os resultados foram confirmados durante a execução dos testes no DC01.
+``` powershell
+ping 1.1.1.1
+nslookup www.microsoft.com
+```
 
-## 6. Estado atual do laboratório
+O `ping 1.1.1.1` recebeu quatro respostas, sem perda de pacotes. O
+`nslookup www.microsoft.com` devolveu uma resposta DNS, confirmando que
+a resolução de nomes externos funcionava.
 
-A preparação do primeiro servidor, DC01, encontra-se concluída.
+**Evidências:** - `prints/10-teste-ping.png` -
+`prints/11-teste-dns.png`
 
-Fica para a próxima fase a criação da segunda máquina virtual, `VM-DC02`, a instalação do Windows Server 2022 e a configuração do respetivo endereço IPv4.
+## 5. Segundo servidor --- DC02
 
-Após a preparação dos dois servidores, será necessário testar a conectividade entre ambos.
+### 5.1. Criação e instalação
 
-A promoção do DC01 a Domain Controller e a criação da floresta, da árvore e do domínio pertencem ao Laboratório 2.
+Criei uma segunda máquina virtual com o nome `VM-DC02`, utilizando a
+mesma ISO do Windows Server 2022 e os mesmos recursos virtuais definidos
+para a primeira máquina.
 
-## 7. Evidências
+  Parâmetro                 Configuração
+  ------------------------- -----------------------------------------
+  Nome da máquina virtual   `VM-DC02`
+  Sistema operativo         Windows Server 2022 Standard Evaluation
+  Interface                 Desktop Experience
+  Processadores virtuais    2
+  Memória RAM               4096 MB
+  Disco virtual             60 GB
+  Formato do disco          VDI
+  Alocação do disco         Dinâmica
+  Rede                      `LAB-AD`
 
-7.1. Criação do ambiente de virtualização
+Depois da instalação, alterei o nome do computador para `DC02`.
 
-O Oracle VirtualBox foi utilizado para preparar o ambiente de virtualização.
+**Evidências:** - `prints/12-criacao-vm2.png` -
+`prints/13-memoria-virtual2.png` -
+`prints/14-disco-virtual2.png` -
+`prints/15-maquina-virtual2.png` -
+`prints/17-troca-nome-dc02.png`
 
+### 5.2. Configuração IPv4
 
+Configurei o adaptador de rede do `DC02` com o endereço estático
+seguinte:
 
-7.2. Criação da máquina virtual
+  Parâmetro                  Valor
+  -------------------------- -----------------
+  Endereço IPv4              `10.10.10.11`
+  Máscara de sub-rede        `255.255.255.0`
+  Gateway predefinido        `10.10.10.1`
+  DNS preferencial inicial   `1.1.1.1`
+  DNS alternativo inicial    `8.8.8.8`
 
-Foi criada a máquina virtual VM-DC01, definindo o sistema operativo, o disco virtual e os restantes parâmetros de configuração.
+Verifiquei a configuração com:
 
+``` powershell
+ipconfig /all
+```
 
+**Evidências:** - `prints/16-rede-vm-dc02.png` -
+`prints/18-configurar-ipv4.png` -
+`prints/19-configuracao-ipv4-dc02.png`
 
+### 5.3. Testes de conectividade e DNS
 
+No `DC02`, executei:
 
-7.3. Instalação do Windows Server 2022
+``` powershell
+ping 1.1.1.1
+nslookup www.microsoft.com
+```
 
-Durante a instalação, foi selecionada a edição Windows Server 2022 Standard Evaluation com Desktop Experience.
+O teste de conectividade recebeu quatro respostas, sem perda de pacotes.
+O `nslookup` também devolveu uma resposta DNS para `www.microsoft.com`.
 
+**Evidência:** `prints/24-teste-ping-dns.png`
 
+## 6. Comunicação entre os servidores
 
-Foi configurada a palavra-passe da conta administrativa local.
+Com os dois servidores na rede `LAB-AD`, testei a comunicação através de
+ICMPv4.
 
+### 6.1. Primeiro teste a partir do DC02
 
+Inicialmente, o comando:
 
-Após a instalação, o Windows Server 2022 ficou operacional.
+``` powershell
+ping 10.10.10.10
+```
 
+executado no `DC02` falhou, com quatro pedidos expirados e 100% de perda
+de pacotes.
 
+**Evidência do resultado inicial:** `prints/20-erro-conexao.png`
 
-7.4. Configuração da rede virtual
+### 6.2. Regra de firewall no DC01
 
-A máquina virtual foi associada à rede NAT LAB-AD, com o prefixo IPv4 10.10.10.0/24 e o servidor DHCP desativado.
+Para permitir pedidos de ping IPv4 de entrada no `DC01`, abri o
+PowerShell como administrador e executei:
 
+``` powershell
+New-NetFirewallRule -DisplayName "Laboratorio 1 Permitir Ping IPv4" -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -Action Allow
+```
 
+A saída do comando indicou que a regra foi criada e que o seu estado era
+`Enabled`.
 
+Esta regra permite mensagens ICMPv4 do tipo 8 (Echo Request) de entrada,
+utilizadas pelo comando `ping`.
 
+**Evidência:** `prints/21-regra-firewall.png`
 
-7.5. Verificação da configuração IPv4
+### 6.3. Repetição dos testes
 
-A configuração de rede do DC01 foi verificada através do comando ipconfig /all.
+Depois de criar a regra, repeti os testes nos dois sentidos:
 
-A captura seguinte apresenta o endereço IPv4 10.10.10.10, a máscara 255.255.255.0, o gateway 10.10.10.1 e os servidores DNS 1.1.1.1 e 8.8.8.8.
+-   No `DC02`, executei `ping 10.10.10.10`. Foram recebidas quatro
+    respostas, sem perda de pacotes.
+-   No `DC01`, executei `ping 10.10.10.11`. Foram recebidas quatro
+    respostas, sem perda de pacotes.
 
+Os resultados confirmam a comunicação IPv4 entre os dois servidores nos
+dois sentidos.
 
+**Evidências:** - `prints/22-conexao-maquinas.png` -
+`prints/23-ping-inverso-maquinas.png`
 
-7.6. Testes de conectividade e resolução DNS
+## 7. Resumo da configuração
 
-Foi executado o comando ping 1.1.1.1. Foram recebidas as quatro respostas, sem perda de pacotes.
+  Parâmetro                  DC01                  DC02
+  -------------------------- --------------------- ---------------------
+  Nome da VM no VirtualBox   `VM-DC01`             `VM-DC02`
+  Nome do computador         `DC01`                `DC02`
+  IPv4                       `10.10.10.10`         `10.10.10.11`
+  Máscara                    `255.255.255.0`       `255.255.255.0`
+  Gateway                    `10.10.10.1`          `10.10.10.1`
+  DNS preferencial inicial   `1.1.1.1`             `1.1.1.1`
+  DNS alternativo inicial    `8.8.8.8`             `8.8.8.8`
+  Rede virtual               `LAB-AD`              `LAB-AD`
+  RAM                        4096 MB               4096 MB
+  CPUs virtuais              2                     2
+  Disco virtual              60 GB, VDI dinâmico   60 GB, VDI dinâmico
 
+## 8. Estado final e conclusão
 
+No final desta etapa, as duas máquinas virtuais têm o Windows Server
+2022 instalado, nomes de computador definidos e endereços IPv4 estáticos
+configurados na rede `LAB-AD`. Os testes registados confirmam o acesso à
+Internet, a resolução DNS externa e a comunicação entre `DC01` e `DC02`
+nos dois sentidos, depois de permitir ICMPv4 de entrada no `DC01`.
 
-Foi executado o comando nslookup www.microsoft.com. A resolução DNS foi bem-sucedida e devolveu os registos de endereço correspondentes.
+A preparação do ambiente para o Laboratório 1 está concluída de acordo
+com as evidências reunidas. A promoção do `DC01` a Domain Controller, a
+criação da floresta/domínio e a integração do `DC02` no domínio não
+foram realizadas nesta fase, pois pertencem ao Laboratório 2.
+
+## 9. Organização das evidências
+
+As capturas referidas neste documento devem estar guardadas na pasta
+`prints`, ao lado deste ficheiro, com os nomes indicados nas
+respetivas secções. Por exemplo:
+
+``` text
+laboratorio-01/
+├── README.md
+└── prints/
+    ├── 01-virtualbox.png
+    ├── 02-criacao-vm.png
+    ├── ...
+    └── 24-teste-ping-dns.png
+```
