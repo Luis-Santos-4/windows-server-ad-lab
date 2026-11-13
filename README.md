@@ -35,10 +35,11 @@ Promoting `DC01` to Domain Controller, creating the forest and domain, and joini
 ## Repository structure
 
 ```text
-administracao-sistemas/
+windows-server-ad-lab/
 ├── README.md
 ├── README.pt.md
-├── laboratorio-01.md
+├── lab-01.en.md
+├── lab-01.pt.md
 └── prints/
     ├── 01-virtualbox.png
     ├── 02-criacao-vm.png
