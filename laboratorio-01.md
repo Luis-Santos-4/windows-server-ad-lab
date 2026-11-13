@@ -37,6 +37,7 @@ configurados manualmente.
 
 **Evidência:** 
 ![Instalação do VirtualBox](prints/01-virtualbox.png)
+<img src="prints/01-virtualbox.png" width="600" alt="Instalação do VirtualBox">
 
 ## 4. Primeiro servidor --- DC01
 
