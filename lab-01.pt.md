@@ -258,4 +258,13 @@ A preparação do ambiente para o Laboratório 1 está concluída de acordo com 
 
 ## 9. Organização das evidências
 
-As capturas referidas neste documento estão guardadas na pasta `prints`
+As capturas referidas neste documento estão guardadas na pasta `prints`, ao lado deste ficheiro:
+
+```text
+windows-server-ad-lab/
+├── README.md           # Página inicial (inglês)
+├── README.pt.md        # Página inicial (português)
+├── lab-01.en.md        # Laboratório 1 (inglês)
+├── lab-01.pt.md        # Laboratório 1 (português)
+└── prints/             # Capturas de ecrã usadas como evidência
+```
