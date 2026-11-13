@@ -1,5 +1,7 @@
 # Laboratório 1 — Preparação do Ambiente Laboratorial
 
+[English](lab-01.en.md) | **Português**
+
 ## 1. Objetivo
 
 Neste laboratório preparei um ambiente de virtualização para trabalhar com Windows Server 2022. O objetivo foi criar duas máquinas virtuais, colocá-las na mesma rede virtual, configurar endereços IPv4 estáticos e confirmar que os servidores conseguem comunicar entre si e aceder a serviços externos.
@@ -256,14 +258,4 @@ A preparação do ambiente para o Laboratório 1 está concluída de acordo com 
 
 ## 9. Organização das evidências
 
-As capturas referidas neste documento estão guardadas na pasta `prints`, ao lado deste ficheiro:
-
-```text
-administracao-sistemas/
-├── README.md
-└── prints/
-    ├── 01-virtualbox.png
-    ├── 02-criacao-vm.png
-    ├── ...
-    └── 24-teste-ping-dns.png
-```
+As capturas referidas neste documento estão guardadas na pasta `prints`
