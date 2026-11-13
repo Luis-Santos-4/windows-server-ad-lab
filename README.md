@@ -18,6 +18,8 @@ Setting up a virtualization environment with Oracle VirtualBox and Windows Serve
 
 **Documentation:** [Lab 1 — Lab Environment Setup](lab-01.en.md)
 
+<a href="lab-01.en.md" target="_blank">Lab 1 — Lab Environment Setup</a>
+
 **Evidence:** [Screenshots folder](prints/)
 
 ### Lab 2 — Active Directory *(coming soon)*
