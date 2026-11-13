@@ -16,7 +16,7 @@ Preparação de um ambiente de virtualização com Oracle VirtualBox e Windows S
 - Configuração de uma regra de firewall para permitir ping IPv4.
 - Testes de comunicação entre os dois servidores.
 
-**Documentação:** [Laboratório 1 — Preparação do Ambiente Laboratorial](laboratorio-01.md)
+**Documentação:** [Laboratório 1 — Preparação do Ambiente Laboratorial](laboratorio-01.pt.md)
 
 **Evidências:** [Pasta de capturas de ecrã](prints/)
 
