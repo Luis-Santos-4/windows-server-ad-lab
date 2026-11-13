@@ -1,4 +1,4 @@
-# Administração de Sistemas
+# Windows Server Ad LAB
 
 Repositório de documentação técnica dos laboratórios de Administração de Sistemas, com foco na preparação de ambientes virtuais, Windows Server, redes e serviços de infraestrutura.
 
@@ -33,6 +33,7 @@ Preparação de um ambiente de virtualização com Oracle VirtualBox e Windows S
 ```text
 administracao-sistemas/
 ├── README.md
+├── README.pt.md
 ├── laboratorio-01.md
 └── prints/
     ├── 01-virtualbox.png
