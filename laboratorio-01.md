@@ -35,7 +35,8 @@ configurados manualmente.
   DHCP           Desativado
   IPv6           Desativado
 
-**Evidência:** `prints/01-virtualbox.png`
+**Evidência:** 
+![Instalação do VirtualBox](prints/01-virtualbox.png)
 
 ## 4. Primeiro servidor --- DC01
 
